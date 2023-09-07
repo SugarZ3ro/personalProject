@@ -1,0 +1,28 @@
+# Node.js dependencies
+/node_modules
+
+# Output of 'npm pack'
+/*.tgz
+
+# TypeScript build output
+/dist
+
+# Visual Studio Code settings
+.vscode
+
+# macOS
+.DS_Store
+
+# Editor and IDE files
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# npm package locks
+package-lock.json
+yarn.lock
+
+# Environment variables file
+.env
