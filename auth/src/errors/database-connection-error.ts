@@ -1,12 +1,22 @@
-export class DatabaseConnectionError extends Error {
+import { CustomError } from "./custom-errors";
+
+export class DatabaseConnectionError extends CustomError {
+    statusCode = 500
     reason = "Error connecting to database";
     constructor(){
-        super();
+        super('Error connecting to db');
         //Only because we are extending a builtin class
         Object.setPrototypeOf(this, DatabaseConnectionError.prototype);
         //Sets the prototype of the current object to the RequestValidationError prototype, 
         //allowing us to inherit properties and methods from the RequestValidationError prototype.
 
+    }
+    serializeErrors(){
+        return [
+            {
+                message:this.reason
+            }
+        ]
     }
 }
 

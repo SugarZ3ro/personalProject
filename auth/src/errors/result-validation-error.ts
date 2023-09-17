@@ -1,9 +1,11 @@
 import { ValidationError } from "express-validator";
+import { CustomError } from "./custom-errors";
 
-export class RequestValidationError extends Error {
+export class RequestValidationError extends CustomError {
+    statusCode = 400;
     errors: ValidationError[]
     constructor(errors:ValidationError[]){
-        super();
+        super("result validation Error");
         this.errors = errors;
 
         //Only because we are extending a builtin class
@@ -12,7 +14,17 @@ export class RequestValidationError extends Error {
         //allowing us to inherit properties and methods from the RequestValidationError prototype.
 
     }
+    serializeErrors() {
+      return this.errors.map((err) => {
+        if (err.type === 'field') {
+          return { message: err.msg, field: err.path };
+        }
+        return { message: err.msg };                  //to satisfy TS we use another return statement for the other control path
+                                                      // else the return type of the function becomes  ...| any;
+      });
+    }
 }
+
 
 //also could have been declared as :
 // export class RequestValidationError extends Error {

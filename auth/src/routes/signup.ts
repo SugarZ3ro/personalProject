@@ -22,12 +22,12 @@ router.post('/api/users/signup',[
     
     const errors = validationResult(req);  //checking with the validationResult function to pullout the error message if any.
     if(!errors.isEmpty()){
-        throw new DatabaseConnectionError()  //sending an array of error messages if any.
+        throw new RequestValidationError(errors.array())  //sending an array of error messages if any.
     }
     const {email, password } = req.body;
 
     console.log('Creating an user...');
-    throw new Error("Error connecting to database");   //whatever string is passed to the Error("") function can be accessed by the message attribute in the recieving error object
+    throw new DatabaseConnectionError();   //whatever string is passed to the Error("") function can be accessed by the message attribute in the recieving error object
     
     res.send({})
     
