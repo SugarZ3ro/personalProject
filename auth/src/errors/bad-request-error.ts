@@ -1,5 +1,5 @@
 //A generic error class
-import { CustomError } from "./custom-errors";
+import { CustomError } from "./custom-error";
 
 export class BadRequestError extends CustomError{
     statusCode=400;

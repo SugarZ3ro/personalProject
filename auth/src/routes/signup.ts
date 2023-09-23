@@ -1,6 +1,8 @@
 import express, { Request, Response } from 'express';
-import {body, validationResult} from 'express-validator';
-import { RequestValidationError } from '../errors/result-validation-error';
+import { body } from 'express-validator';
+import jwt from 'jsonwebtoken';
+
+import { validateRequest } from '../middlewares/validate-request';
 import { User } from '../models/user';
 import { BadRequestError } from '../errors/bad-request-error';
 
@@ -18,14 +20,9 @@ router.post('/api/users/signup',[
         .isLength({min:4, max:20})
         .withMessage("Password  must be between 4 and 20 characters.")
 ],
+validateRequest,
 async (req: Request,res:Response)=>{
-    //after validation the middleware passes us the request with appended attributes(whether there are any errors or not)
-    // the WithMessage function is used to append message to the request object 
-    
-    const errors = validationResult(req);  //checking with the validationResult function to pullout the error message if any.
-    if(!errors.isEmpty()){
-        throw new RequestValidationError(errors.array())  //sending an array of error messages if any.
-    }
+   
     const {email, password } = req.body;
     //check if the email already exists in the user database
     const existingUser = await User.findOne({email });
@@ -36,6 +33,22 @@ async (req: Request,res:Response)=>{
 
     const user  = User.build({email,password});
     await user.save();
+
+    
+    //Generate JWT
+    const usetJwt = jwt.sign({
+        id:user.id,
+        email:user.email
+    },
+    process.env.JWT_KEY!        //telling the compiler that "process.env.JWT_KEY" is NOT NULL
+                                // so dont complain about it. Done using ! operator after the variable
+    );
+
+    //store the jwt on a session object
+    req.session = {
+        jwt:usetJwt
+    };
+
 
     res.status(201).send({user});
 
